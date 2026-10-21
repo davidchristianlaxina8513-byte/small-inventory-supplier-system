@@ -1,0 +1,18 @@
+# docker-compose.yml — smallinventoryandsuppliersystem (nextjs-supabase) — application + managed Supabase
+services:
+  frontend:
+    container_name: smallinventoryandsuppliersystem-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${FRONTEND_HOST_PORT:-3000}:3000"
+    volumes:
+      - ./.:/app
+      - /app/node_modules
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+      - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+
+# The Supabase platform is managed separately. Use `supabase start` for the
+# official local stack instead of approximating it with a bare PostgreSQL image.
