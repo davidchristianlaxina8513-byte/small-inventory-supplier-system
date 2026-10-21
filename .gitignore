@@ -40,3 +40,4 @@ postgres-data/
 # Supabase
 .supabase/
 supabase/.temp/
+supabase/.branches/

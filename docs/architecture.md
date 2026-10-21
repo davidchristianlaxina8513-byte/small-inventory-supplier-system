@@ -6,27 +6,37 @@ Companion to the generated starter docs in `docs/architecture/` (they describe t
 
 - Next.js 16.3.4 (App Router, Turbopack), React 19.2.8, TypeScript 6.0.3 (strict)
 - Tailwind CSS 4.3.3 (`@tailwindcss/postcss`), CVA + clsx + tailwind-merge for components
-- Supabase: `@supabase/supabase-js` 2.114.0, `@supabase/ssr` 0.12.5, `supabase` CLI 2.116.0 (PostgreSQL 16)
-- Testing: Vitest 4.1.11 + Testing Library + jsdom; Playwright 1.62.1; `supabase test db` for RLS SQL tests
+- Supabase: `@supabase/supabase-js` 2.114.0, `@supabase/ssr` 0.12.5, `supabase` CLI 2.121.0; local PostgreSQL 17.11 (`db.major_version = 17`, approved deviation — see `CONTEXT.md`)
+- Testing: Vitest 4.1.11 + Testing Library + jsdom; Playwright 1.62.1; pgTAP via `supabase test db`
 - Node >= 22.14.0 (profile runtime 24.20.0), npm >= 11.19.0
 
-## Current starter state (what exists and is preserved)
+## Current state after Phase 1 security hardening (2026-10-22)
 
 ```text
 src/
-  app/                 layout.tsx, page.tsx (starter hero), api/health/route.ts, globals.css
+  proxy.ts              Next 16 session refresh + unauthenticated redirects
+  app/
+    page.tsx            session-based redirect to login/dashboard/account-status
+    login/              sign-in page
+    account-status/     pending/suspended landing page
+    (app)/              active-user layout; dashboard; admin/users
+    api/health/         retained starter health route
   components/
-    common/            Button.tsx (+ test)
-    layout/            Container.tsx, Section.tsx
-  features/status/     StarterStatus feature slice (to be replaced once dashboards exist)
-  lib/
-    supabase/          client.ts (browser), server.ts (RSC/server actions) — keep
-    cn.ts              class helper — keep
-  test/setup.ts        vitest setup — keep
+    common/Button.tsx, layout/{Container,Section}.tsx
+  features/
+    auth/               actions, LoginForm, session services, status/redirect/role helpers + tests
+    admin/              admin actions/services
+  lib/supabase/         client.ts, server.ts, proxy.ts + proxy.test.ts (typed with generated Database)
+  features/auth/services/session.test.ts   pending/suspended/admin guard tests
+  types/database.types.ts   generated
+  test/setup.ts         vitest cleanup + jest-dom
 supabase/
-  config.toml          local stack (api 54321, db 54322, studio 54323)
-  migrations/00000000000000_create_examples.sql   fail-closed placeholder — keep until real migrations supersede it
-  tests/examples_rls.test.sql                     RLS test example — keep as pattern
+  config.toml           local stack: api 54331, db 54332, studio 54333, PG 17; public signup disabled
+  migrations/00000000000000_create_examples.sql   retained fail-closed example
+  migrations/20261021120000_create_identity.sql   Phase 1 identity schema + RLS
+  migrations/20261022120000_harden_account_provisioning.sql   auth email mirror + admin guardrails
+  seed.sql              three fictional offices
+  tests/examples_rls.test.sql, tests/identity_rls.test.sql
 ```
 
 Also preserved: security headers in `next.config.ts`, Docker/Makefile/CI workflows, playbooks, governance docs (`AGENTS.md`, `RULES.md`, `CONTEXT.md`, `PROGRESS.md`).
@@ -54,9 +64,10 @@ Rules: server components by default; client components only for browser behavior
 
 ## Security model
 
-- Auth: Supabase Auth sessions via `@supabase/ssr` cookie pattern (browser client, server client). A middleware/proxy for session refresh and route protection must be added in Phase 1 (not present in the starter).
-- Authorization: server-side checks in actions/route handlers **and** PostgreSQL RLS on every exposed table (fail-closed). Never trust role/user/office IDs from the browser. No self-promotion.
-- Secrets: only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local` (from `.env.example`). A service-role key, if ever required, stays server-only with no public prefix.
+- Auth: Supabase Auth email/password via `@supabase/ssr` cookie pattern. Public signup is disabled in local config while the email provider remains enabled for sign-in. `src/proxy.ts` refreshes the session and redirects unauthenticated users; server components/actions re-check the user (`getUser`), account status, and roles. Accounts start `pending` and require administrator activation through the Admin API.
+- Identity: `profiles.email` mirrors `auth.users.email` via database triggers, including email changes, and is backfilled for existing profiles. The value comes from Auth, never from `raw_user_meta_data`; RLS allows the owner or an admin to read it, and column privileges prevent authenticated users from writing it.
+- Authorization: server-side checks in layouts/actions (`requireActiveUser`, `requireAdmin`) **and** PostgreSQL RLS on every exposed table (fail-closed). Never trust role/user/office IDs from the browser. No self-promotion; suspended administrators lose administrator authority. Database triggers block self-suspension and self/last-active-admin role removal, with an advisory lock for concurrent admin-role changes. `has_role()` also requires an active profile.
+- Secrets: only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local` (from `.env.example`). A service-role key, if ever required, stays server-only with no public prefix. The admin email solution requires no service-role key in application code.
 - Inventory: balances and movements are writable only through transactional PostgreSQL functions (row locking, no negative stock, atomic movement insert). Browser writes denied.
 - Audit: append-only `audit_logs`; private attachments stored with authorized downloads only.
 
@@ -70,7 +81,9 @@ Schema lands in **small migrations per phase**, with `npm run supabase:types` re
 
 ## Known environment caveats
 
-- **Vitest pool:** the default threads pool fails on this Windows machine ("Timeout waiting for worker to respond"); `npm test -- --pool=forks` passes (2/2). Proposed fix (pending approval, Q4): set `pool: 'forks'` in `vitest.config.ts`.
-- **No lockfile was committed** by the generator; `npm install` created one. Commit before enabling CI (`npm ci`).
-- **No Supabase env yet:** without `.env.local`, the Supabase clients cannot connect. Phase 1 needs a local (`supabase start`) or hosted project (Q2).
-- The starter home page and `features/status` are placeholders; replace only when the real login/dashboard exists (Starter Transition rule).
+- **Disk space:** the C: drive was nearly full during Phase 1 validation. Docker's VHDX and browser caches consume most space. Free space before large builds or Docker pruning; Docker Desktop may need a restart if its engine hangs under disk pressure.
+- **Vitest pool:** the default pool passed the Phase 1 suite (22 tests). `--pool=forks` remains available if worker timeouts return on this machine; the Q4 config change was not applied.
+- **Local env:** `.env.local` points at the local Supabase stack (`127.0.0.1:54331`) and is gitignored. No hosted project is linked; hosted Auth signup settings remain unconfigured. Demo accounts are created manually via the Supabase Admin API; `npm run supabase:reset` removes them.
+- **Ports:** API 54331, DB 54332, shadow 54330, pooler 54339, studio 54333, analytics 54337 — chosen to avoid the other local Supabase project.
+- **Remote parity:** `db.major_version = 17` must be checked against any future hosted project (`SHOW server_version`) before linking.
+- The starter `examples` table/test is retained as a fail-closed RLS pattern; it is not part of the SISS domain model.

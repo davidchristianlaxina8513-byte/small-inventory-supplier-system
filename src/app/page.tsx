@@ -1,20 +1,12 @@
-import { Container } from '@/components/layout/Container'
-import { Section } from '@/components/layout/Section'
-import { StarterStatus } from '@/features/status/components/StarterStatus'
-import { getStarterStatus } from '@/features/status/services/getStarterStatus'
+import { redirect } from 'next/navigation'
+import { canAccessApplication } from '@/features/auth/lib/accountStatus'
+import { getSessionProfile } from '@/features/auth/services/session'
 
-export default function HomePage() {
-  const status = getStarterStatus()
-  return (
-    <main>
-      <Section ui="hero" className="min-h-screen">
-        <Container className="space-y-4">
-          <p className="text-sm font-semibold text-primary">create-win-project</p>
-          <StarterStatus status={status} />
-          <p className="max-w-2xl leading-7">{"anewwebapplication"}</p>
-          <p>Read <code>AGENTS.md</code> before your first change.</p>
-        </Container>
-      </Section>
-    </main>
-  )
+export const dynamic = 'force-dynamic'
+
+export default async function HomePage() {
+  const profile = await getSessionProfile()
+
+  if (!profile) redirect('/login')
+  redirect(canAccessApplication(profile.status) ? '/dashboard' : '/account-status')
 }

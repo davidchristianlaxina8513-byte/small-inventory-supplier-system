@@ -42,7 +42,7 @@ Accounting/payroll, supplier payment processing, automated payment/purchasing, S
 
 - Architecture profile: medium
 - Production baseline: generated default; deviations require approval.
-- Authentication: not-yet (SISS plan selects Supabase Auth; Phase 1 implements it — see Product Decisions)
+- Authentication: Supabase Auth (email/password) with Next.js proxy session refresh — implemented in Phase 1
 - Uploads: object-storage
 - Background jobs: none
 - Offline behavior: none
@@ -60,12 +60,25 @@ Accounting/payroll, supplier payment processing, automated payment/purchasing, S
 
 <!-- Record date, approver, rationale, affected files, and recovery path. -->
 
-- (none yet — pending user approval on: vitest `pool: 'forks'` config change (Q4), adding `zod` (Q3))
+- 2026-10-21 — **Local PostgreSQL 17 deviation (approved by user during the Phase 1 pause):**
+  `supabase/config.toml` sets `db.major_version = 17`. The generated baseline docs referenced
+  PostgreSQL 16 and the SISS plan does not pin a database version. Runtime verification: local
+  Supabase (CLI 2.121.0) reports PostgreSQL 17.11; the CLI accepts `db.major_version` 13, 14, 15,
+  and 17. Supabase requires this value to match any linked remote project's `SHOW server_version`;
+  no remote is linked or verified. Affected files: `supabase/config.toml`, `docs/architecture.md`.
+  Recovery path: do not change the version silently; verify the target database version and obtain
+  explicit approval before linking a remote or changing the major version.
+- Not adopted in Phase 1: adding `zod` (Q3) and changing the Vitest pool (Q4). Server actions use
+  explicit validation; the default Vitest pool passed the Phase 1 suite. Both remain optional
+  improvements if the user approves them.
 
 ## Notes
 
-- Open questions Q1–Q5 (account policy, Supabase environment target, zod, vitest pool, per-office approval differences) are listed in `docs/assumptions-and-decisions.md`.
-- Baseline verified healthy on 2026-10-21: install, lint, typecheck, build pass; unit tests pass with `--pool=forks`.
+- Open questions Q1–Q5 (account policy, Supabase environment target, zod, vitest pool, per-office approval differences) are listed in `docs/assumptions-and-decisions.md`. Q2 is resolved to local Supabase for now. Q1's safe default is now enforced locally: no public registration, admin-created accounts with approval; hosted Auth settings still require explicit configuration when a project exists.
+- 2026-10-21: Phase 1 is implemented and tested against local Supabase (PostgreSQL 17.11): identity migration + three-office seed, fail-closed RLS, Next 16 proxy session refresh, login/account-status/dashboard/admin-users flows, and server-side role/status updates. Awaiting user review before Phase 2.
+- 2026-10-22: Phase 1 security-review fixes applied. Local Auth signup is disabled (`[auth] enable_signup = false`; `/auth/v1/settings` reports `disable_signup: true` while email login remains enabled). `profiles.email` mirrors `auth.users.email` through triggers; admins can read it via RLS, but authenticated users cannot update it. `has_role()` now requires an active profile, and database triggers block self-suspension and self/last-active-admin role removal. Hosted Auth settings remain unchanged because no hosted project is configured.
+- Local demo accounts are created manually through the Supabase Admin API (no in-app registration). The database reset command removes them.
+- Local environment risk: disk space was exhausted during validation and recovered by clearing caches; Docker Desktop required one restart and the existing Supabase containers restarted with it. Free disk space before running builds, browser tests, or Docker pruning.
 
 ## Expected Concerns (advisory)
 

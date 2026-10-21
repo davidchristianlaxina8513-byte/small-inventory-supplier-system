@@ -4,18 +4,22 @@ Source: `SISS_OpenCode_Full_Project_Plan.md` §14. Layers: unit/component (Vites
 
 Status: `[ ]` not started, `[~]` partial, `[x]` passed.
 
-## Baseline (verified 2026-10-21)
+## Baseline and Phase 1 (verified 2026-10-22)
 
 - [x] `npm run lint` — pass
 - [x] `npm run typecheck` — pass
 - [x] `npm run build` — pass
-- [x] `npm test -- --pool=forks` — 2/2 starter tests pass (default pool times out on this machine; see `docs/architecture.md` caveats)
-- [ ] Supabase local stack / RLS tests — blocked on env setup (Q2)
+- [x] `npm test` — 22/22 Phase 1 unit/component tests pass (default pool)
+- [x] `npm run supabase:test` — 35/35 pgTAP assertions pass (identity RLS + retained example)
+- [x] `npm run test:e2e` — 2/2 committed unauthenticated redirect/health tests pass
+- [x] Non-destructive authenticated Playwright smoke run (local demo accounts) — admin email visibility, student admin-route denial, pending status gating, and authenticated login routing pass; not committed because it depends on local seeded accounts.
+- [ ] Docker/disk environment permanently healthy — the C: drive remains nearly full; generated caches were cleared and Docker was restarted.
 
 ## 1. Functional tests
 
-- [ ] AUTH-01 Active user can sign in; sign-out clears the session.
-- [ ] AUTH-03 Suspended/pending user cannot access protected functionality.
+- [x] AUTH-01 Active user can sign in; sign-out clears the session.
+- [x] AUTH-03 Suspended/pending user cannot access protected functionality.
+- [x] AUTH-04 Admin can activate an account and assign a role; admin routes are denied to non-admins.
 - [ ] REQ-01 Eligible user submits a valid request; receives a reference number.
 - [ ] REQ-02 Invalid/incomplete request is rejected with useful feedback.
 - [ ] REQ-04 Authorized office staff can review their office's requests.
@@ -34,9 +38,14 @@ Status: `[ ]` not started, `[~]` partial, `[x]` passed.
 - [ ] SEC-01 Student cannot edit inventory.
 - [ ] SEC-04 User cannot read another user's private request.
 - [ ] SEC-03 Office A staff cannot modify Office B data (SQL-level test).
-- [ ] SEC-01/04 User cannot grant themselves a privileged role.
+- [x] SEC-01/04 User cannot grant themselves a privileged role (pgTAP: RLS denies self-promotion).
+- [x] SEC-08 Suspended administrator loses administrator authority and cannot assign roles (pgTAP); `has_role()` also returns false for suspended accounts.
+- [x] SEC-07 Anonymous role has no table access; service credentials are not in `NEXT_PUBLIC_*` variables.
+- [x] SEC-09 Public signup is disabled locally (`/auth/v1/settings` reports `disable_signup: true`) while email/password login remains enabled.
+- [x] SEC-10 Admin can read the Auth email mirrored into `profiles.email`; a student cannot read another user's email and cannot update email through the profile API (pgTAP).
+- [x] SEC-11 Database rejects self-suspension and self/last-active-admin role removal; a second active admin can still remove another admin (pgTAP).
+- [x] SEC-12 Pending/suspended guards and admin-route denial are covered by Vitest session tests and a non-destructive authenticated Playwright smoke run.
 - [ ] SEC-05 Browser cannot write directly to balances or movement ledger.
-- [ ] SEC-07 Service-role credentials absent from client bundles.
 - [ ] Private attachments cannot be downloaded by unauthorized users.
 - [ ] SEC-06 Audit records cannot be silently changed by ordinary users.
 
@@ -58,8 +67,11 @@ Collect task completion, observed difficulties, and feedback. Compare with the c
 
 ## 5. Starter test migration
 
-Starter assertions (`page.test.tsx`, `Button.test.tsx`, `e2e/home.spec.ts`, `examples_rls.test.sql`) stay until their real product replacement exists; then they are replaced with product-behavior tests. Never delete or weaken tests merely to make validation pass.
+- `src/app/page.test.tsx` and `e2e/home.spec.ts` were replaced because the starter hero no longer exists: the root now routes by session, and E2E asserts the unauthenticated redirect to `/login`.
+- `features/status` and its starter status service/component were removed after the real dashboard replaced them.
+- `Button.test.tsx` and `examples_rls.test.sql` are retained; the examples test remains a fail-closed RLS pattern.
+- Never delete or weaken tests merely to make validation pass.
 
 ## 6. Final validation gate (Phase 7)
 
-`npm run check` (format:check + lint + typecheck + unit tests) and `npm run build` and `npm run test:e2e` and `npm run supabase:test` all green, or exact blockers reported.
+`npm run check` (format:check + lint + typecheck + unit tests), `npm run build`, `npm run test:e2e`, and `npm run supabase:test` all green, or exact blockers reported. Note: the repository-wide `format:check` currently flags pre-existing docs/playbooks and starter files; Phase 1 source files were formatted with Prettier individually.
