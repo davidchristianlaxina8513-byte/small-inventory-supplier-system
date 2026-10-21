@@ -1,0 +1,11 @@
+{
+  "visibility": "private",
+  "authorizeEveryOperation": true,
+  "maximumBytes": 10485760,
+  "acceptedTypes": [],
+  "generatedObjectNames": true,
+  "verifySignature": true,
+  "quarantineBeforeUse": true,
+  "malwareScanRequired": true,
+  "abandonedUploadCleanupHours": 24
+}
