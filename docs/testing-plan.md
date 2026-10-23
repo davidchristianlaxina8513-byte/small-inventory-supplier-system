@@ -4,6 +4,16 @@ Source: `SISS_OpenCode_Full_Project_Plan.md` §14. Layers: unit/component (Vites
 
 Status: `[ ]` not started, `[~]` partial, `[x]` passed.
 
+## Operational MVP verification (2026-10-22)
+
+- [x] Lint, strict TypeScript, and production build pass with all workflow routes.
+- [x] 136 pgTAP assertions cover identity, catalog, ledger, RLS, requests, reservations, loans, incidents, receiving, transfers, and auditing.
+- [x] Actual issued quantity and accepted delivery quantity drive stock changes.
+- [x] Damaged returns remain unavailable; incident resolution preserves history.
+- [x] Vitest: 44/44 pass with `--pool=threads --maxWorkers=1`; the default worker pool is intermittently unstable on this Windows host.
+- [x] Playwright: 3/3 committed smoke tests pass, including authenticated inventory creation and receipt.
+- [ ] A two-session issue-race harness and representative-user evaluation remain.
+
 ## Baseline and Phase 1 (verified 2026-10-22)
 
 - [x] `npm run lint` — pass
@@ -15,28 +25,43 @@ Status: `[ ]` not started, `[~]` partial, `[x]` passed.
 - [x] Non-destructive authenticated Playwright smoke run (local demo accounts) — admin email visibility, student admin-route denial, pending status gating, and authenticated login routing pass; not committed because it depends on local seeded accounts.
 - [ ] Docker/disk environment permanently healthy — the C: drive remains nearly full; generated caches were cleared and Docker was restarted.
 
+## Phase 2A inventory foundation (verified 2026-10-22)
+
+- [x] `npm run lint` — pass
+- [x] `npm run typecheck` — pass
+- [x] `npm test` — 44/44 unit/component tests pass across 12 files
+- [x] `npm run supabase:test` — 105/105 pgTAP assertions pass across 4 files
+- [x] `npm run build` — pass; inventory routes were generated
+- [x] Catalog/RLS: students and cross-office staff cannot read/write catalog records; staff can manage their own office; admins manage all offices.
+- [x] Ledger integrity: direct balance/movement writes are denied; receipts increase; issues decrease; negative stock is rejected; adjustments require office head/admin; reasons are mandatory; movements cannot be updated/deleted.
+- [x] Tracking type cannot change after the first movement.
+- [ ] Authenticated browser smoke test of the inventory UI with local demo accounts.
+- [ ] Concurrency test for two simultaneous issues against the same balance.
+
 ## 1. Functional tests
 
 - [x] AUTH-01 Active user can sign in; sign-out clears the session.
 - [x] AUTH-03 Suspended/pending user cannot access protected functionality.
 - [x] AUTH-04 Admin can activate an account and assign a role; admin routes are denied to non-admins.
-- [ ] REQ-01 Eligible user submits a valid request; receives a reference number.
+- [x] REQ-01 Eligible user submits a valid request; receives a reference number.
 - [ ] REQ-02 Invalid/incomplete request is rejected with useful feedback.
-- [ ] REQ-04 Authorized office staff can review their office's requests.
-- [ ] Unauthorized user cannot approve a request.
-- [ ] REQ-05 Actual issued quantity (not requested) is deducted.
-- [ ] LOAN-01 Return records the correct asset and condition.
-- [ ] LOAN-03 Damaged asset does not become available automatically.
-- [ ] STK-03 Low-stock alert appears at the configured threshold.
+- [x] REQ-04 Authorized office staff can review their office's requests.
+- [x] Unauthorized user cannot approve a request.
+- [x] REQ-05 Actual issued quantity (not requested) is deducted.
+- [x] LOAN-01 Return records the correct asset and condition.
+- [x] LOAN-03 Damaged asset does not become available automatically.
+- [x] INV-01/04 Item catalog CRUD, office scoping, search, and filters work.
+- [x] STK-01 Receipt/issue/adjustment movements append to the ledger.
+- [x] STK-03 Low-stock alert appears at the configured threshold.
 - [ ] SUP-01 / PUR-01 Authorized users can create suppliers and purchase requests.
-- [ ] PUR-03/PUR-04 Accepted delivery quantity is recorded; stock increases only by accepted amount.
+- [x] PUR-03/PUR-04 Accepted delivery quantity is recorded; stock increases only by accepted amount.
 - [ ] RPT-01/02 Reports respect office and user permissions.
-- [ ] AUD-01 Significant actions appear in audit history.
+- [x] AUD-01 Core workflow actions appear in audit history.
 
 ## 2. Security tests
 
 - [ ] SEC-01 Student cannot edit inventory.
-- [ ] SEC-04 User cannot read another user's private request.
+- [x] SEC-04 User cannot read another user's private request.
 - [ ] SEC-03 Office A staff cannot modify Office B data (SQL-level test).
 - [x] SEC-01/04 User cannot grant themselves a privileged role (pgTAP: RLS denies self-promotion).
 - [x] SEC-08 Suspended administrator loses administrator authority and cannot assign roles (pgTAP); `has_role()` also returns false for suspended accounts.
@@ -45,19 +70,20 @@ Status: `[ ]` not started, `[~]` partial, `[x]` passed.
 - [x] SEC-10 Admin can read the Auth email mirrored into `profiles.email`; a student cannot read another user's email and cannot update email through the profile API (pgTAP).
 - [x] SEC-11 Database rejects self-suspension and self/last-active-admin role removal; a second active admin can still remove another admin (pgTAP).
 - [x] SEC-12 Pending/suspended guards and admin-route denial are covered by Vitest session tests and a non-destructive authenticated Playwright smoke run.
-- [ ] SEC-05 Browser cannot write directly to balances or movement ledger.
+- [x] SEC-05 Browser cannot write directly to balances or movement ledger (pgTAP grants + RLS).
+- [x] Inventory office staff cannot read/modify another office's catalog (pgTAP).
 - [ ] Private attachments cannot be downloaded by unauthorized users.
-- [ ] SEC-06 Audit records cannot be silently changed by ordinary users.
+- [x] SEC-06 Audit records cannot be silently changed by ordinary users.
 
 ## 3. Concurrency and integrity tests (SQL / transactional)
 
 - [ ] STK-02 Two requests competing for the last units cannot over-issue.
-- [ ] Concurrent issues cannot produce a negative balance.
+- [ ] Concurrent issues cannot produce a negative balance (row locking is implemented; a two-session test is still required).
 - [ ] Duplicate submission/retry does not issue stock twice.
-- [ ] RESV-02 Two users cannot reserve the same asset for overlapping periods.
+- [x] RESV-02 Overlapping active reservations are rejected.
 - [ ] Failed transaction rolls back all related changes.
-- [ ] PUR-04 Partial delivery changes inventory only by accepted quantity.
-- [ ] Transfer movements update both locations consistently.
+- [x] PUR-04 Partial delivery changes inventory only by accepted quantity.
+- [x] Transfer movements update both locations consistently in one transaction.
 
 ## 4. Usability evaluation (manual, representative users)
 
