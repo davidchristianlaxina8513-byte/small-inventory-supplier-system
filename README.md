@@ -1,36 +1,50 @@
-# smallinventoryandsuppliersystem
+# Small Inventory and Supplier System (SISS)
 
-> anewwebapplication
+Academic inventory, request, borrowing, reservation, incident, supplier, and purchasing prototype for three school offices. Built with Next.js 16, TypeScript, Tailwind CSS 4, and Supabase.
 
-Generated with create-win-project.
+## Requirements
 
-## Start
+- Node.js 22.14 or newer
+- npm 11.19 or newer
+- Docker Desktop for the local Supabase stack
+- Supabase CLI (the project currently uses 2.121.0)
+
+## Local setup
 
 ```bash
-cp .env.example .env.local 2>/dev/null || cp .env.example .env
 npm install
+npm run supabase:start
+supabase db reset
+npm run supabase:types
 npm run dev
 ```
 
-## Validate
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. These browser variables are public configuration.
+
+Public signup is disabled. Create demo users through the local Supabase Auth administration API, then activate them and assign roles from `/admin/users`. `supabase db reset` removes local users and data and re-seeds the three fictional offices.
+
+## Validation
 
 ```bash
 npm run lint
 npm run typecheck
-npm run test --if-present
+npm test
+npm run supabase:test
+npm run test:e2e
 npm run build
 ```
 
-Commit the generated lockfile before enabling CI; CI uses `npm ci`.
+The default Vitest worker pool is unstable on the current Windows machine. The verified fallback is `npx vitest run --pool=threads --maxWorkers=1`. Database policy and workflow tests run through pgTAP.
 
-## Agent-assisted work
+## Implemented modules
 
-1. Put product goals and boundaries in `CONTEXT.md`.
-2. Read `AGENTS.md` for commands and authority boundaries.
-3. Use `RULES.md` to open only the relevant playbook section.
-4. Treat tests and application behavior as the source of truth when prose drifts.
+- Authentication, account status, role, and office boundaries
+- Inventory catalog, balances, serialized assets, stock movements, and transfers
+- Requests, approval history, partial approval, and atomic issuance
+- Reservations with overlap protection; loans, overdue display, and returns
+- Damage/missing reports and resolution
+- Suppliers, purchase requests, orders, receiving, and discrepancies
+- Notifications, audit logs, live dashboards, and reports
+- Administrator user, role, and office management
 
-## Important files
-
-- `README.md`: start and validation instructions.
-- `docs/`: architecture, API, setup, and deployment documentation.
+See `CONTEXT.md`, `PROGRESS.md`, and `docs/` for decisions, requirements, workflows, architecture, database design, and test status.
