@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- prettier-ignore -->
+    <title>IT305 Midterm Performance Task — Integration Checkpoint (Partial Build + Documentation)</title>
+    <style>
+      @page {
+        size: A4 portrait;
+        margin: 1in;
+        @bottom-center {
+          content: counter(page);
+          font-family: 'Times New Roman', serif;
+          font-size: 10pt;
+        }
+      }
+      @page:first {
+        @bottom-center {
+          content: none;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: #000;
+        font-family: 'Times New Roman', serif;
+        font-size: 12pt;
+        line-height: 1.5;
+        text-align: left;
+      }
+      h1 {
+        margin: 18pt 0 9pt;
+        font-size: 14pt;
+        font-weight: bold;
+      }
+      h2,
+      h3 {
+        margin: 14pt 0 7pt;
+        font-size: 13pt;
+        font-weight: bold;
+      }
+      p {
+        margin: 0 0 9pt;
+      }
+      ul,
+      ol {
+        margin-top: 0;
+      }
+      table {
+        width: 100%;
+        margin: 8pt 0 12pt;
+        border-collapse: collapse;
+        font-size: 10.5pt;
+        line-height: 1;
+        break-inside: avoid;
+      }
+      th,
+      td {
+        padding: 5pt;
+        border: 1px solid #000;
+        vertical-align: top;
+        text-align: left;
+      }
+      th {
+        font-weight: bold;
+      }
+      code,
+      pre {
+        font-family: Consolas, 'Courier New', monospace;
+        font-size: 10pt;
+        line-height: 1;
+      }
+      pre {
+        padding: 8pt;
+        border: 1px solid #777;
+        white-space: pre-wrap;
+        break-inside: avoid;
+      }
+      figure {
+        margin: 12pt 0;
+        break-inside: avoid;
+      }
+      figure img {
+        display: block;
+        max-width: 100%;
+        max-height: 8.1in;
+        margin: 0 auto;
+        object-fit: contain;
+      }
+      figcaption {
+        margin-top: 5pt;
+        font-size: 10.5pt;
+        line-height: 1;
+        text-align: center;
+      }
+      .cover {
+        height: 9.6in;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        page-break-after: always;
+      }
+      .cover h1 {
+        font-size: 18pt;
+      }
+      .cover-details {
+        width: 78%;
+        margin: 18pt auto 0;
+        text-align: left;
+      }
+      .cover-details p {
+        margin-bottom: 6pt;
+      }
+      .cover-details ol {
+        margin: 4pt 0 9pt 24pt;
+      }
+      .blank {
+        display: inline-block;
+        min-width: 230pt;
+        border-bottom: 1px solid #000;
+      }
+      .status {
+        font-weight: bold;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .note {
+        padding: 8pt;
+        border: 1px solid #555;
+        background: #f3f3f3;
+      }
+      .placeholder {
+        padding: 8pt;
+        border: 2px dashed #777;
+        font-weight: bold;
+      }
+      a {
+        color: #000;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="cover">
+      <p><strong>1. Cover Page</strong></p>
+      <h1>Small Inventory and Supplier System (SISS)</h1>
+      <!-- prettier-ignore -->
+      <h2>IT305 Midterm Performance Task — Integration Checkpoint (Partial Build + Documentation)</h2>
+      <p>Technical Report</p>
+      <div class="cover-details">
+        <p><strong>Course:</strong> IT305</p>
+        <p><strong>Team Name:</strong> COFFEE CODERS</p>
+        <p><strong>Team Members:</strong></p>
+        <ol>
+          <li>APRIL PELISCO</li>
+          <li>LEAH MAE ANONG</li>
+          <li>DAVID CHRISTIAN LAXINA</li>
+        </ol>
+        <p><strong>Instructor:</strong> Christine Marie Ordaneza</p>
+        <p><strong>Submission Date:</strong> October 23, 2026</p>
+      </div>
+      <p class="note">
+        Draft source prepared from verified repository and local checkpoint evidence. Complete the
+        missing manual evidence, declaration details, signatures, links, and final PDF inspection
+        before submission.
+      </p>
+    </section>
+
+    <h1>2. Introduction and Problem Statement</h1>
+    <p>
+      The Small Inventory and Supplier System addresses fragmented inventory, request, borrowing,
+      reservation, incident, supplier, and purchasing records used by three school offices: the
+      Property Custodian Office, Hospitality Management Laboratory Office, and Science Laboratory
+      Office. Paper forms and disconnected spreadsheets make it difficult to maintain consistent
+      stock balances, enforce office responsibility, trace approvals, and preserve a reliable
+      history.
+    </p>
+    <p>
+      SISS provides a local web application where requesters can submit and track requests, office
+      personnel can perform office-scoped operations, office heads can approve and adjust authorized
+      records, and administrators can manage the system across offices. This midterm report focuses
+      on four verified integration milestones: architecture, a consumed API response, secure
+      category CRUD, and authenticated role-restricted access.
+    </p>
+
+    <h1>3. System Objectives and Scope</h1>
+    <h2>Objectives</h2>
+    <ul>
+      <li>Centralize inventory and supplier-related records for the three offices.</li>
+      <li>
+        Provide authenticated, role-aware access for requesters, office personnel, office heads, and
+        administrators.
+      </li>
+      <li>
+        Use database constraints, controlled functions, grants, and row-level security (RLS) to
+        protect records.
+      </li>
+      <li>
+        Maintain traceable stock, request, circulation, incident, procurement, notification, and
+        audit history.
+      </li>
+      <li>
+        Demonstrate working integration between the browser, Next.js, Supabase Auth, PostgREST/RPC,
+        and PostgreSQL.
+      </li>
+    </ul>
+    <h2>Checkpoint scope</h2>
+    <p>
+      <span class="status">Implemented:</span> local authentication, six application roles, three
+      office scopes, catalog and soft deactivation, stock and operational workflows, dashboard
+      health integration, RLS, and automated tests.
+    </p>
+    <p>
+      <span class="status">Browser verified:</span> login, admin dashboard, health status, category
+      create/read/update/deactivate, student login, and student rejection from an administrator
+      route.
+    </p>
+    <p>
+      <span class="status">Planned or incomplete:</span> hosted deployment, production
+      email/password recovery, private incident attachment delivery, scheduled notifications,
+      configurable multi-step approvals, production monitoring, and representative-user evaluation.
+    </p>
+
+    <h1>4. Week 1 — Integration Plan v2</h1>
+    <p>
+      The implemented design follows a medium application architecture: a Next.js entry point
+      delegates to a feature service or Server Action, which owns Supabase access. Presentation
+      components do not own database security. PostgreSQL remains the final data authorization and
+      integrity boundary.
+    </p>
+    <ol>
+      <li>The browser renders React pages and submits forms or requests JSON.</li>
+      <li>
+        Next.js Route Handlers, Server Components, and Server Actions validate the request and
+        resolve the authenticated user.
+      </li>
+      <li>
+        Supabase Auth establishes identity and supplies the user UUID used by application
+        authorization.
+      </li>
+      <li>Feature services use typed Supabase table queries or controlled RPC functions.</li>
+      <li>
+        PostgreSQL grants, RLS, constraints, and transactions enforce access and consistency beside
+        the data.
+      </li>
+    </ol>
+    <p>
+      The detailed source plan is stored at
+      <code>docs/midterm/week-1-architecture/integration-plan-v2.md</code>.
+    </p>
+
+    <h1>5. Week 1 — Architecture Diagram and Data Flow</h1>
+    <figure>
+      <img
+        src="../week-1-architecture/siss-integration-architecture.svg"
+        alt="SISS integration architecture"
+      />
+      <figcaption>
+        Figure 1. SISS browser, Next.js, Supabase Auth, PostgREST/RPC, and PostgreSQL integration
+        architecture.
+      </figcaption>
+    </figure>
+    <h2>Authentication flow</h2>
+    <ol>
+      <li>The browser submits email and password to <code>signInAction</code>.</li>
+      <li>Supabase Auth validates the account and issues a cookie-backed session.</li>
+      <li><code>src/proxy.ts</code> refreshes the session during navigation.</li>
+      <li>
+        <code>requireActiveUser</code> loads the profile and roles and rejects inactive accounts.
+      </li>
+      <li>
+        Role/office guards protect the route or action, and PostgreSQL RLS protects the operation.
+      </li>
+    </ol>
+    <h2>API flow</h2>
+    <p>
+      The dashboard renders <code>ApiHealthStatus</code>, which requests
+      <code>GET /api/health</code>, validates HTTP success and <code>{"status":"ok"}</code>, and
+      renders either “System API Online” or a safe unavailable state.
+    </p>
+    <h2>Category data flow</h2>
+    <p>
+      Authorized forms call validated Server Actions. Supabase query builders issue parameterized
+      operations. RLS checks active role and office scope. Category removal is implemented as
+      <code>is_active = false</code> so historical references remain intact.
+    </p>
+
+    <h1>6. Technologies and Dependencies</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Verified technology</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Browser UI</td>
+          <td>React 19.2.8, Tailwind CSS 4.3.3</td>
+          <td>Pages, forms, feedback, responsive presentation</td>
+        </tr>
+        <tr>
+          <td>Web runtime</td>
+          <td>Next.js 16.3.4 App Router, TypeScript 6.0.3</td>
+          <td>Routing, rendering, Route Handlers, Server Actions</td>
+        </tr>
+        <tr>
+          <td>Supabase clients</td>
+          <td><code>@supabase/supabase-js</code> 2.114.0, <code>@supabase/ssr</code> 0.12.5</td>
+          <td>Typed data access and cookie session integration</td>
+        </tr>
+        <tr>
+          <td>Identity</td>
+          <td>Supabase Auth</td>
+          <td>Email/password identity and sessions</td>
+        </tr>
+        <tr>
+          <td>Database</td>
+          <td>Local PostgreSQL 17 through Supabase CLI 2.121.0</td>
+          <td>Data, RLS, constraints, transactions, audit history</td>
+        </tr>
+        <tr>
+          <td>Testing</td>
+          <td>Vitest 4.1.11, Testing Library, Playwright 1.62.1, pgTAP</td>
+          <td>Unit/component, browser, and database policy verification</td>
+        </tr>
+        <tr>
+          <td>Local runtime</td>
+          <td>Node.js, npm, Docker Desktop</td>
+          <td>Development and local Supabase services</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1>7. Integration Points Table</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Integration point</th>
+          <th>Contract</th>
+          <th>Status</th>
+          <th>Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Browser → Next.js</td>
+          <td>Navigation, forms, Server Actions, health JSON</td>
+          <td>Implemented and browser verified</td>
+          <td>Figures 2–15, with limitations recorded for Figures 5 and 13</td>
+        </tr>
+        <tr>
+          <td>Dashboard → health endpoint</td>
+          <td><code>GET /api/health</code> returns <code>{"status":"ok"}</code></td>
+          <td>Automated and browser verified</td>
+          <td>Figures 3–5</td>
+        </tr>
+        <tr>
+          <td>Next.js → Supabase Auth</td>
+          <td>Sign in, <code>getUser</code>, refresh, sign out</td>
+          <td>Automated and browser verified</td>
+          <td>Figures 2–3 and 14–15</td>
+        </tr>
+        <tr>
+          <td>Next.js → database</td>
+          <td>Typed table queries and RPC calls</td>
+          <td>Implemented and tested</td>
+          <td>Vitest and pgTAP results</td>
+        </tr>
+        <tr>
+          <td>Auth → profiles/roles</td>
+          <td>User UUID connects Auth identity to profile and role rows</td>
+          <td>Implemented and tested</td>
+          <td>Identity migration and pgTAP</td>
+        </tr>
+        <tr>
+          <td>PostgreSQL security</td>
+          <td>Grants, RLS, constraints, transactional functions</td>
+          <td>Implemented and tested</td>
+          <td>56 focused pgTAP assertions</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1>8. Week 2 API Integration</h1>
+    <p>
+      <code>src/app/api/health/route.ts</code> exposes a public liveness response containing only
+      <code>{"status":"ok"}</code>.
+      <code>src/features/status/components/ApiHealthStatus.tsx</code> is a small Client Component
+      placed on the protected dashboard. It requests the endpoint without caching, validates the
+      status code and JSON contract, and handles loading, success, malformed response, HTTP failure,
+      and network failure states.
+    </p>
+    <p>
+      Focused tests cover the Route Handler contract and four component outcomes. The final focused
+      API rerun passed two test files and five tests. The earlier checkpoint run that included
+      authentication and inventory tests passed ten files and forty tests.
+    </p>
+    <p class="note">
+      The dashboard indicator is visible in Figure 3. Screenshot 03 was inspected but is effectively
+      blank and is excluded as proof; it is retained unchanged in the evidence directory for audit
+      transparency.
+    </p>
+    <figure>
+      <img src="../screenshots/04-api-response.png" alt="Health API JSON response" />
+      <figcaption>
+        Figure 4. Actual public health response <code>{"status":"ok"}</code>. Verified; the image is
+        visually sparse because the endpoint returns JSON rather than a rendered page.
+      </figcaption>
+    </figure>
+    <figure>
+      <img
+        src="../screenshots/10-api-network-health.png"
+        alt="Browser health endpoint and DevTools Network request with HTTP 200"
+      />
+      <figcaption>
+        Figure 5. Health endpoint at <code>/api/health</code>, JSON response
+        <code>{"status":"ok"}</code>, and Network status 200. Verified with a limitation: the
+        Network row does not visibly label the request method and the Response subpanel is not open.
+      </figcaption>
+    </figure>
+
+    <h1>9. Week 3 Database CRUD Integration</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>Implementation</th>
+          <th>Security</th>
+          <th>Verification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Create</td>
+          <td><code>createCategoryAction</code></td>
+          <td>Server validation, role/office guard, INSERT RLS</td>
+          <td>Browser and pgTAP verified</td>
+        </tr>
+        <tr>
+          <td>Read</td>
+          <td><code>getCategoryOptions</code></td>
+          <td>Inventory access guard and SELECT RLS</td>
+          <td>Browser and pgTAP verified</td>
+        </tr>
+        <tr>
+          <td>Update</td>
+          <td><code>updateCategoryAction</code></td>
+          <td>UUID validation, office check, UPDATE RLS</td>
+          <td>Browser, validation tests, and pgTAP verified</td>
+        </tr>
+        <tr>
+          <td>Deactivate</td>
+          <td><code>is_active = false</code> through update action</td>
+          <td>Same role/office checks and policy</td>
+          <td>Browser verified</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Supabase query builders separate values from generated SQL operations. Input is validated at
+      the server boundary. The database independently checks the active user and office scope.
+    </p>
+    <p>
+      <strong>Deletion qualification:</strong> SISS uses soft deactivation to retain referenced
+      inventory history. The report does not claim a physical SQL <code>DELETE</code>. Instructor
+      confirmation is required if the rubric specifically requires permanent deletion.
+    </p>
+    <figure>
+      <img src="../screenshots/05-category-before-create.png" alt="Category list before creation" />
+      <figcaption>
+        Figure 6. Category list before the isolated UI demonstration record was created. Verified.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/06-category-after-create.png" alt="Category created successfully" />
+      <figcaption>
+        Figure 7. Fictional IT305 Evidence Category created successfully. Verified.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/07-category-after-edit.png" alt="Category edited successfully" />
+      <figcaption>Figure 8. Demonstration category renamed successfully. Verified.</figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/08-category-after-deactivation.png" alt="Category marked inactive" />
+      <figcaption>
+        Figure 9. Demonstration category retained with inactive status. Verified soft deactivation,
+        which preserves database history instead of physically deleting the row.
+      </figcaption>
+    </figure>
+    <figure>
+      <img
+        src="../screenshots/11-db-category-before.png"
+        alt="Supabase categories table before CRUD demonstration"
+      />
+      <figcaption>
+        Figure 10. Supabase <code>categories</code> table before the separate database CRUD record
+        was created. Verified with a limitation: the table is unfiltered and already contains older
+        fictional evidence rows.
+      </figcaption>
+    </figure>
+    <figure>
+      <img
+        src="../screenshots/12-db-category-after-create.png"
+        alt="Supabase category after create"
+      />
+      <figcaption>
+        Figure 11. Persisted <code>IT305 CRUD Demo 20261023</code> row with
+        <code>is_active = TRUE</code>. Verified create evidence.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/13-db-category-after-edit.png" alt="Supabase category after edit" />
+      <figcaption>
+        Figure 12. The same record renamed to <code>IT305 CRUD Demo 20261023 Edited.</code> and
+        still active. Verified update evidence.
+      </figcaption>
+    </figure>
+    <figure>
+      <img
+        src="../screenshots/14-db-category-after-deactivation.png"
+        alt="Supabase category table after deactivation attempt"
+      />
+      <figcaption>
+        Figure 13. Database table after the deactivation capture. Evidence mismatch: the CRUD Demo
+        row from Figures 11–12 still displays <code>TRUE</code>; a different older evidence row
+        displays <code>FALSE</code>. This figure does not prove deactivation of the same CRUD Demo
+        record. Correct direct database proof remains PENDING.
+      </figcaption>
+    </figure>
+
+    <h1>10. Week 4 Authentication and Role-Based Access</h1>
+    <p>
+      SISS uses Supabase email/password authentication. Public registration is disabled locally.
+      Protected layouts call <code>requireActiveUser</code>; administrator pages call
+      <code>requireAdmin</code>; inventory uses office-aware server guards. PostgreSQL RLS repeats
+      authorization beside the data operation.
+    </p>
+    <p>
+      The schema supports <code>student</code>, <code>teacher</code>, <code>non_teaching</code>,
+      <code>office_staff</code>, <code>office_head</code>, and <code>admin</code>. Office staff and
+      office heads are limited to assigned offices; administrators operate across offices. The
+      evidence run verified an admin session and an isolated student session. A direct student
+      request to <code>/admin/users</code> returned HTTP 404.
+    </p>
+    <figure>
+      <img src="../screenshots/01-login.png" alt="SISS login page" />
+      <figcaption>
+        Figure 2. SISS email/password login page with empty credential fields. Verified.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/02-admin-dashboard.png" alt="Administrator dashboard" />
+      <figcaption>
+        Figure 3. Authenticated administrator dashboard and role-aware navigation. Verified.
+      </figcaption>
+    </figure>
+    <figure>
+      <img
+        src="../screenshots/09-student-access-denied.png"
+        alt="Student receives 404 on admin route"
+      />
+      <figcaption>
+        Figure 14. Authenticated student denied access to the administrator users route. Verified
+        HTTP 404. The mostly white area is the normal centered Next.js 404 layout.
+      </figcaption>
+    </figure>
+    <p>
+      A read-only aggregate query against the local Supabase Auth schema returned five
+      authentication users, five users with a stored password hash, and five hashes matching the
+      bcrypt format. No identity or hash value was selected. These counts demonstrate the local
+      stored-hash format but do not alone prove password strength, secure transport, access
+      governance, or every aspect of password security.
+    </p>
+    <figure>
+      <img
+        src="../screenshots/15-password-hashing-safe.png"
+        alt="Safe aggregate password-hashing query and counts"
+      />
+      <figcaption>
+        Figure 15. Safe aggregate result: 5 Auth users, 5 stored password hashes, and 5
+        bcrypt-format hashes. Verified without exposing passwords, identities, or hash values.
+      </figcaption>
+    </figure>
+
+    <h1>11. Setup and Run Instructions</h1>
+    <ol>
+      <li>Install Node.js 22.14 or newer, npm 11.19 or newer, and Docker Desktop.</li>
+      <li>
+        Run <code>npm install</code> initially. Use <code>npm ci</code> after the lockfile is
+        committed.
+      </li>
+      <li>
+        Copy <code>.env.example</code> to the ignored <code>.env.local</code> and set the local
+        public Supabase URL and publishable key. Do not commit the file.
+      </li>
+      <li>Start the local stack with <code>npm run supabase:start</code>.</li>
+      <li>
+        Start the web application with <code>npm run dev -- --hostname 127.0.0.1 --port 3000</code>.
+      </li>
+      <li>Open <code>http://127.0.0.1:3000</code>.</li>
+    </ol>
+    <p class="note">
+      <strong>Checkpoint safety:</strong> do not run <code>supabase db reset</code> while preserving
+      local demonstration accounts and evidence data.
+    </p>
+
+    <h1>12. Testing and Verification Results</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Verification</th>
+          <th>Actual result</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Focused API/auth/category Vitest command</td>
+          <td>10 files, 40 tests passed</td>
+          <td>2026-10-22</td>
+        </tr>
+        <tr>
+          <td>Final focused API rerun</td>
+          <td>2 files, 5 tests passed</td>
+          <td>2026-10-22</td>
+        </tr>
+        <tr>
+          <td>Focused identity and inventory pgTAP</td>
+          <td>2 files, 56 assertions passed</td>
+          <td>2026-10-22</td>
+        </tr>
+        <tr>
+          <td>Changed-file ESLint</td>
+          <td>Passed</td>
+          <td>2026-10-22</td>
+        </tr>
+        <tr>
+          <td>TypeScript <code>tsc --noEmit</code></td>
+          <td>Passed</td>
+          <td>2026-10-22</td>
+        </tr>
+        <tr>
+          <td>Earlier operational MVP validation recorded in repository</td>
+          <td>
+            44 Vitest tests, 136 pgTAP assertions, 3 Playwright smoke tests, production build passed
+          </td>
+          <td>2026-10-22</td>
+        </tr>
+        <tr>
+          <td>Checkpoint browser evidence</td>
+          <td>
+            Public redirect/API and admin/API/category flow passed; corrected focused student
+            restriction rerun passed
+          </td>
+          <td>2026-10-23</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      The later broad navigation audit was stopped when the 8 GB host entered severe memory pressure
+      and local Supabase became unhealthy. It is not counted as a passing audit. All 15 screenshot
+      files decode as PNG images and were visually inspected. Screenshot 03 is invalid as evidence,
+      and Screenshot 14 does not prove deactivation of the same database demonstration record.
+    </p>
+
+    <h1>13. Known Issues and Future Development</h1>
+    <ul>
+      <li>
+        The local machine can exhaust memory when Next.js, Docker, Supabase services, and broad
+        browser traversal run together.
+      </li>
+      <li>
+        Playwright screenshot activity triggered a development-only hydration warning involving
+        temporary <code>caret-color: transparent</code> styling; the screenshots contain the Next
+        development issue badge on category pages.
+      </li>
+      <li>
+        Screenshot 03 is effectively blank. The API status remains visible in the administrator
+        dashboard screenshot, but Screenshot 03 must not be cited independently.
+      </li>
+      <li>
+        Screenshot 14 shows the CRUD Demo row still active and therefore does not complete the
+        direct database before/create/edit/deactivate sequence. A corrected capture is pending.
+      </li>
+      <li>
+        The health endpoint proves the Next.js API is alive; it is not a database readiness check.
+      </li>
+      <li>
+        Physical category deletion remains an instructor clarification because current behavior
+        preserves history through soft deactivation.
+      </li>
+      <li>
+        Hosted Supabase settings, password recovery, production email, private uploads, scheduled
+        notifications, monitoring, representative-user evaluation, and advanced concurrency testing
+        remain future work.
+      </li>
+    </ul>
+
+    <h1>14. Development and Collaboration Evidence</h1>
+    <p>
+      This report is submitted by COFFEE CODERS: APRIL PELISCO, LEAH MAE ANONG, and DAVID CHRISTIAN
+      LAXINA. Individual contributions must be recorded from genuine team evidence and are not
+      inferred from team membership.
+    </p>
+    <p>
+      The repository currently contains eight genuine commits, all authored by Christian Laxina.
+      The operational implementation and test groups now have real commit hashes. This Midterm
+      documentation and evidence package is staged but remains uncommitted, so it does not yet have
+      a commit hash.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Hash</th>
+          <th>Date</th>
+          <th>Author</th>
+          <th>Subject</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>dda498a</code></td>
+          <td>2026-10-24</td>
+          <td>Christian Laxina</td>
+          <td>test: add SISS workflow and midterm evidence coverage</td>
+        </tr>
+        <tr>
+          <td><code>5912041</code></td>
+          <td>2026-10-24</td>
+          <td>Christian Laxina</td>
+          <td>feat: implement SISS inventory and operational workflows</td>
+        </tr>
+        <tr>
+          <td><code>f2f98b4</code></td>
+          <td>2026-10-24</td>
+          <td>Christian Laxina</td>
+          <td>docs: update SISS project context and progress</td>
+        </tr>
+        <tr>
+          <td><code>89cf9ca</code></td>
+          <td>2026-10-22</td>
+          <td>Christian Laxina</td>
+          <td>Complete Phase 1 authentication and security</td>
+        </tr>
+        <tr>
+          <td><code>d895eba</code></td>
+          <td>2026-10-21</td>
+          <td>Christian Laxina</td>
+          <td>chore: move project files to repository root</td>
+        </tr>
+        <tr>
+          <td><code>5fdf5d2</code></td>
+          <td>2026-10-21</td>
+          <td>Christian Laxina</td>
+          <td>feat: add application source, tests, and database migrations</td>
+        </tr>
+        <tr>
+          <td><code>1322f3f</code></td>
+          <td>2026-10-21</td>
+          <td>Christian Laxina</td>
+          <td>docs: add project documentation, playbooks, and agent guidance</td>
+        </tr>
+        <tr>
+          <td><code>508a487</code></td>
+          <td>2026-10-21</td>
+          <td>Christian Laxina</td>
+          <td>chore: scaffold project configuration and tooling</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="placeholder">
+      PENDING EVIDENCE: final Git log after reviewed checkpoint commits; genuine collaboration
+      records identifying each member’s work; group demonstration recording; and individual YouTube
+      walkthrough links.
+    </p>
+
+    <h1>15. AI Declaration Forms and Evidence References</h1>
+    <p>
+      Repository planning identifies OpenCode in the supplied project plan. Codex assisted with
+      repository inspection, implementation, documentation, tests, and local evidence automation.
+      ChatGPT assistance must be declared only by members who actually used it. Each member must
+      complete and sign an individual form from
+      <code>docs/midterm/documentation/AI-Declaration-Form-Template.md</code>.
+    </p>
+    <p>
+      Real chat exports or screenshots must be stored under <code>/ai-evidence</code> using dates
+      and tool names. That directory currently contains only a manifest because no chat exports have
+      been supplied. Uncommitted AI-assisted work must leave the commit-hash field blank until
+      genuine commits exist.
+    </p>
+    <p class="placeholder">
+      PENDING EVIDENCE: dated AI chat exports, completed usage logs, real corresponding commit
+      hashes for currently uncommitted work, signed declarations, and dates signed.
+    </p>
+
+    <h1>Evidence Reference Summary</h1>
+    <p>
+      Figures 2–15 reference applicable evidence from the 15 genuine PNG files in
+      <code>docs/midterm/screenshots/</code>. Screenshot 03 is retained but excluded as proof
+      because it is effectively blank. Screenshot 14 is included only to disclose its record
+      mismatch. The detailed verification state and pending-evidence items are maintained in
+      <code>docs/midterm/documentation/evidence-index.md</code>.
+    </p>
+    <p class="note">
+      <strong>Document status:</strong> technically consolidated but not final. Correct database
+      deactivation proof, collaboration media, final Git evidence, AI chat exports, completed
+      declarations, signatures, recording links, and final PDF inspection are still required. If the
+      instructor requires the GET method and Response tab visibly inside the same Network image, a
+      clearer API capture is also pending. The intended final filename is
+      <code>IT305_Midterm_COFFEE_CODERS.pdf</code>.
+    </p>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">SISS integration architecture</title>
+  <desc id="desc">Browser users access a Next.js application which integrates with Supabase Auth and a PostgreSQL database protected by row level security.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/></marker>
+    <style>.box{fill:#fff;stroke:#334155;stroke-width:2}.group{fill:#f8fafc;stroke:#94a3b8;stroke-width:2}.title{font:700 24px Arial;fill:#0f172a}.head{font:700 18px Arial;fill:#0f172a}.text{font:14px Arial;fill:#334155}.small{font:12px Arial;fill:#475569}.line{stroke:#334155;stroke-width:2;marker-end:url(#arrow)}.dash{stroke:#64748b;stroke-width:2;stroke-dasharray:7 6;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1200" height="720" fill="#f1f5f9"/>
+  <text x="600" y="42" text-anchor="middle" class="title">Small Inventory and Supplier System</text>
+
+  <rect x="45" y="90" width="230" height="500" rx="14" class="group"/>
+  <text x="160" y="125" text-anchor="middle" class="head">Users and browser</text>
+  <rect x="75" y="155" width="170" height="70" rx="9" class="box"/><text x="160" y="184" text-anchor="middle" class="text">Requesters</text><text x="160" y="205" text-anchor="middle" class="small">student / employees</text>
+  <rect x="75" y="250" width="170" height="70" rx="9" class="box"/><text x="160" y="279" text-anchor="middle" class="text">Office operators</text><text x="160" y="300" text-anchor="middle" class="small">staff / office head</text>
+  <rect x="75" y="345" width="170" height="70" rx="9" class="box"/><text x="160" y="384" text-anchor="middle" class="text">Administrator</text>
+  <rect x="75" y="455" width="170" height="90" rx="9" class="box"/><text x="160" y="486" text-anchor="middle" class="text">React UI</text><text x="160" y="508" text-anchor="middle" class="small">forms + dashboard</text><text x="160" y="528" text-anchor="middle" class="small">API health fetch</text>
+
+  <rect x="360" y="90" width="390" height="500" rx="14" class="group"/>
+  <text x="555" y="125" text-anchor="middle" class="head">Next.js 16 application</text>
+  <rect x="395" y="155" width="320" height="70" rx="9" class="box"/><text x="555" y="184" text-anchor="middle" class="text">Proxy + protected layouts</text><text x="555" y="205" text-anchor="middle" class="small">session refresh and route gates</text>
+  <rect x="395" y="250" width="150" height="100" rx="9" class="box"/><text x="470" y="280" text-anchor="middle" class="text">Pages</text><text x="470" y="302" text-anchor="middle" class="small">Server Components</text><text x="470" y="322" text-anchor="middle" class="small">Client status UI</text>
+  <rect x="565" y="250" width="150" height="100" rx="9" class="box"/><text x="640" y="280" text-anchor="middle" class="text">Entry points</text><text x="640" y="302" text-anchor="middle" class="small">Server Actions</text><text x="640" y="322" text-anchor="middle" class="small">GET /api/health</text>
+  <rect x="395" y="390" width="320" height="125" rx="9" class="box"/><text x="555" y="422" text-anchor="middle" class="text">Feature services and authorization</text><text x="555" y="447" text-anchor="middle" class="small">auth · admin · inventory · workflows</text><text x="555" y="469" text-anchor="middle" class="small">input validation + role/office checks</text><text x="555" y="491" text-anchor="middle" class="small">typed Supabase clients</text>
+
+  <rect x="835" y="90" width="320" height="500" rx="14" class="group"/>
+  <text x="995" y="125" text-anchor="middle" class="head">Local Supabase</text>
+  <rect x="875" y="165" width="240" height="95" rx="9" class="box"/><text x="995" y="197" text-anchor="middle" class="text">Supabase Auth</text><text x="995" y="221" text-anchor="middle" class="small">email/password identity</text><text x="995" y="242" text-anchor="middle" class="small">cookie-backed session</text>
+  <rect x="875" y="320" width="240" height="190" rx="9" class="box"/><text x="995" y="352" text-anchor="middle" class="text">PostgreSQL 17</text><text x="995" y="380" text-anchor="middle" class="small">application tables</text><text x="995" y="403" text-anchor="middle" class="small">RLS + grants</text><text x="995" y="426" text-anchor="middle" class="small">constraints + foreign keys</text><text x="995" y="449" text-anchor="middle" class="small">transactional RPC functions</text><text x="995" y="472" text-anchor="middle" class="small">audit and movement history</text>
+
+  <line x1="275" y1="500" x2="360" y2="500" class="line"/><text x="318" y="486" text-anchor="middle" class="small">HTTPS</text>
+  <line x1="750" y1="205" x2="875" y2="205" class="line"/><text x="812" y="190" text-anchor="middle" class="small">Auth API</text>
+  <line x1="750" y1="430" x2="875" y2="430" class="line"/><text x="812" y="415" text-anchor="middle" class="small">PostgREST / RPC</text>
+  <line x1="995" y1="260" x2="995" y2="320" class="dash"/><text x="1065" y="294" class="small">user UUID / JWT</text>
+  <text x="600" y="645" text-anchor="middle" class="head">Defense in depth</text>
+  <text x="600" y="673" text-anchor="middle" class="text">browser state → server validation and authorization → database grants, RLS, constraints, and transactions</text>
+</svg>
