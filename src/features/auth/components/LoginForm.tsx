@@ -112,7 +112,7 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
             Admin: admin@school.edu
           </span>
           <span className="rounded bg-white px-2 py-0.5 font-medium border border-blue-200">
-            Staff: staff@school.edu
+            Personnel: staff@school.edu
           </span>
           <span className="rounded bg-white px-2 py-0.5 font-medium border border-blue-200">
             Student: student@school.edu
