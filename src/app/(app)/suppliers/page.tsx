@@ -43,7 +43,9 @@ export default async function SuppliersPage({
                 />
               </label>
             ))}
-            <button className={buttonClass}>Save supplier</button>
+            <div className="sm:col-span-3 pt-2">
+              <button className={buttonClass}>Save supplier</button>
+            </div>
           </form>
         </Card>
         <Card title="Supplier directory">

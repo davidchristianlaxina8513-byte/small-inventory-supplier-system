@@ -23,6 +23,8 @@ src/generated/prisma/
 # OS
 .DS_Store
 Thumbs.db
+*.docx
+~$*.docx
 
 # Logs
 *.log

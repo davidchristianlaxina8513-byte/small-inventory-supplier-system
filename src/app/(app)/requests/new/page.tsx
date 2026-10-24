@@ -18,7 +18,7 @@ export default async function NewRequestPage({
   const [options, params] = await Promise.all([getWorkflowOptions(), searchParams])
   return (
     <Section>
-      <Container className="max-w-3xl space-y-6">
+      <Container className="space-y-6">
         <header>
           <Link className="text-sm text-primary hover:underline" href="/requests">
             Back to requests
@@ -90,9 +90,11 @@ export default async function NewRequestPage({
               <textarea className={areaClass} name="notes" maxLength={500} />
             </Label>
           </div>
-          <button className={buttonClass} type="submit">
-            Submit request
-          </button>
+          <div className="sm:col-span-2 pt-2">
+            <button className={buttonClass} type="submit">
+              Submit request
+            </button>
+          </div>
         </form>
       </Container>
     </Section>

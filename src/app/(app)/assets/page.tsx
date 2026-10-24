@@ -33,7 +33,7 @@ export default async function AssetsPage({
         </header>
         <Notice searchParams={params} />
         <Card title="Register asset">
-          <form action={createAssetAction} className="grid gap-3 sm:grid-cols-3">
+          <form action={createAssetAction} className="grid gap-4 sm:grid-cols-3">
             <Select
               name="officeId"
               label="Office"
@@ -54,7 +54,9 @@ export default async function AssetsPage({
             <Input name="assetCode" label="Asset code" />
             <Input name="serialNumber" label="Serial number (optional)" required={false} />
             <Input name="notes" label="Notes (optional)" required={false} />
-            <button className={buttonClass}>Register asset</button>
+            <div className="sm:col-span-3 pt-2">
+              <button className={buttonClass}>Register asset</button>
+            </div>
           </form>
         </Card>
         <Card title="Asset register">

@@ -62,7 +62,9 @@ export default async function PurchasingPage({
                 Justification
                 <input className={fieldClass} name="justification" minLength={3} required />
               </label>
-              <button className={buttonClass}>Submit purchase request</button>
+              <div className="sm:col-span-2 pt-2">
+                <button className={buttonClass}>Submit purchase request</button>
+              </div>
             </form>
           </Card>
           <Card title="Create purchase order">
@@ -91,7 +93,9 @@ export default async function PurchasingPage({
               />
               <Input name="quantity" label="Ordered quantity" type="number" />
               <Input name="unitCost" label="Unit cost" type="number" />
-              <button className={buttonClass}>Create order</button>
+              <div className="sm:col-span-2 pt-2">
+                <button className={buttonClass}>Create order</button>
+              </div>
             </form>
           </Card>
         </div>

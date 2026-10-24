@@ -31,7 +31,7 @@ export default async function EditInventoryItemPage({ params }: EditItemPageProp
 
   return (
     <Section>
-      <Container className="max-w-4xl space-y-8">
+      <Container className="space-y-8">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
             <p className="text-sm font-semibold text-primary">Inventory</p>

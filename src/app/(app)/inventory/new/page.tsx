@@ -20,7 +20,7 @@ export default async function NewInventoryItemPage() {
 
   return (
     <Section>
-      <Container className="max-w-4xl space-y-8">
+      <Container className="space-y-8">
         <header className="space-y-2">
           <p className="text-sm font-semibold text-primary">Inventory</p>
           <h1 className="text-3xl font-bold tracking-tight">New item</h1>

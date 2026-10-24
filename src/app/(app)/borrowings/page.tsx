@@ -69,7 +69,9 @@ export default async function BorrowingsPage({
               Due date
               <input className={fieldClass} name="dueAt" type="datetime-local" required />
             </label>
-            <button className={buttonClass}>Release asset</button>
+            <div className="sm:col-span-3 pt-2">
+              <button className={buttonClass}>Release asset</button>
+            </div>
           </form>
         </Card>
         <Card title="Loan register">

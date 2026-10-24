@@ -61,7 +61,9 @@ export default async function ReservationsPage({
               Ends
               <input className={fieldClass} type="datetime-local" name="endsAt" required />
             </label>
-            <button className={buttonClass}>Reserve asset</button>
+            <div className="sm:col-span-2 pt-2">
+              <button className={buttonClass}>Reserve asset</button>
+            </div>
           </form>
         </Card>
         <Card title="Reservation schedule">

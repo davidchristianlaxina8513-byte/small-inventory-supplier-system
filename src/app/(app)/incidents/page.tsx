@@ -79,7 +79,9 @@ export default async function IncidentsPage({
               Description
               <textarea className={areaClass} name="description" minLength={5} required />
             </label>
-            <button className={buttonClass}>Submit report</button>
+            <div className="sm:col-span-2 pt-2">
+              <button className={buttonClass}>Submit report</button>
+            </div>
           </form>
         </Card>
         <Card title="Incident register">
