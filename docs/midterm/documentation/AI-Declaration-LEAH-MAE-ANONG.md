@@ -18,7 +18,7 @@
 
 - [ ] Level 0 — No AI assistance used
 - [x] Level 1 — AI used for explanation, brainstorming, or proofreading
-- [ ] Level 2 — AI suggested code/documentation that the student reviewed and modified
+- [x] Level 2 — AI suggested code/documentation that the student reviewed and modified
 - [ ] Level 3 — AI generated substantial code/documentation under student direction and verification
 - [ ] Other instructor-defined level: ______________________________
 

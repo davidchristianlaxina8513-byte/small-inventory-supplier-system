@@ -21,14 +21,14 @@
 Select the level that accurately represents this member's work. Add the instructor's official definitions if they differ.
 
 - [ ] Level 0 — No AI assistance used
-- [ ] Level 1 — AI used for explanation, brainstorming, or proofreading
+- [x] Level 1 — AI used for explanation, brainstorming, or proofreading
 - [ ] Level 2 — AI suggested code/documentation that the student reviewed and modified
 - [ ] Level 3 — AI generated substantial code/documentation under student direction and verification
 - [ ] Other instructor-defined level: ______________________________
 
 ## C. Tools actually used
 
-- [ ] OpenCode
+- [x] Antigravity
 - [ ] Codex
 - [ ] ChatGPT
 - [ ] Other: ______________________________
