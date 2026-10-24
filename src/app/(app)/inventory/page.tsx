@@ -255,7 +255,7 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
                       {item.reorderLevel === null ? '—' : formatQuantity(item.reorderLevel)}
                     </td>
                     <td className="px-4 py-3">{TRACKING_TYPE_LABELS[item.trackingType]}</td>
-                    <td className="px-4 py-3">{item.isActive ? 'Active' : 'Inactive'}</td>
+                    <td className={"px-4 py-3 " + (item.isActive ? 'text-green-500' : 'text-red-500')}>{item.isActive ? 'Active' : 'Inactive'}</td>
                   </tr>
                 ))}
               </tbody>

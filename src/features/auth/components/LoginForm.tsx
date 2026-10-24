@@ -35,9 +35,7 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
           <label htmlFor="email" className="block text-sm font-semibold text-gray-900">
             Email address
           </label>
-          <span className="text-xs font-semibold text-red-500" aria-hidden="true">
-            * Required
-          </span>
+
         </div>
         <div className="mt-2">
           <input
@@ -64,9 +62,7 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
           <label htmlFor="password" className="block text-sm font-semibold text-gray-900">
             Password
           </label>
-          <span className="text-xs font-semibold text-red-500" aria-hidden="true">
-            * Required
-          </span>
+
         </div>
         <div className="mt-2 flex">
           <div className="-mr-px grid grow grid-cols-1 focus-within:relative">
@@ -105,20 +101,7 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
       <SubmitButton />
 
       {/* Quick Test Accounts Helper */}
-      <div className="rounded-md border border-blue-100 bg-blue-50/60 p-3 text-xs text-slate-700">
-        <p className="font-bold text-blue-900 mb-1.5">Test Credentials (Password: Password123!)</p>
-        <div className="flex flex-wrap gap-2 text-[11px]">
-          <span className="rounded bg-white px-2 py-0.5 font-medium border border-blue-200">
-            Admin: admin@school.edu
-          </span>
-          <span className="rounded bg-white px-2 py-0.5 font-medium border border-blue-200">
-            Personnel: staff@school.edu
-          </span>
-          <span className="rounded bg-white px-2 py-0.5 font-medium border border-blue-200">
-            Student: student@school.edu
-          </span>
-        </div>
-      </div>
+
     </form>
   )
 }
