@@ -14,12 +14,18 @@ export const metadata: Metadata = {
 }
 
 type LoginPageProps = {
-  searchParams: Promise<{ next?: string | string[] }>
+  searchParams: Promise<{
+    next?: string | string[]
+    verified?: string | string[]
+    email?: string | string[]
+  }>
 }
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams
   const next = safeNextPath(typeof params.next === 'string' ? params.next : undefined)
+  const isVerified = params.verified === 'true'
+  const emailParam = typeof params.email === 'string' ? params.email : ''
   const user = await getCurrentUser()
 
   if (user) {
@@ -58,7 +64,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </div>
 
           <div className="mt-6">
-            <LoginForm next={next} />
+            <LoginForm next={next} initialEmail={emailParam} verified={isVerified} />
           </div>
 
           {/* Footer matching DCASIS */}

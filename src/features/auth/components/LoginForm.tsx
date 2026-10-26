@@ -2,17 +2,30 @@
 
 import { useActionState, useState } from 'react'
 import { useFormStatus } from 'react-dom'
-import { EyeIcon, EyeSlashIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
+} from '@heroicons/react/24/outline'
 import { signInAction, type SignInState } from '../actions'
 
 type LoginAction = (state: SignInState, formData: FormData) => Promise<SignInState>
 
 type LoginFormProps = {
   next?: string
+  initialEmail?: string
+  verified?: boolean
   action?: LoginAction
 }
 
-export function LoginForm({ next, action = signInAction }: LoginFormProps) {
+export function LoginForm({
+  next,
+  initialEmail = '',
+  verified = false,
+  action = signInAction,
+}: LoginFormProps) {
   const [state, formAction] = useActionState(action, {})
   const [showPassword, setShowPassword] = useState(false)
   const emailError = state.fieldErrors?.email
@@ -20,6 +33,21 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
 
   return (
     <form action={formAction} noValidate className="space-y-6">
+      {verified && !state.error ? (
+        <div
+          role="status"
+          className="flex items-start gap-3 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
+        >
+          <CheckCircleIcon className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
+          <div>
+            <p className="font-semibold">Email verified successfully!</p>
+            <p className="mt-0.5 text-xs text-emerald-700">
+              Your account is active. Please enter your password to sign in.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       {state.error ? (
         <div
           role="alert"
@@ -35,7 +63,6 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
           <label htmlFor="email" className="block text-sm font-semibold text-gray-900">
             Email address
           </label>
-
         </div>
         <div className="mt-2">
           <input
@@ -44,7 +71,7 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
             type="email"
             autoComplete="username"
             placeholder="e.g. admin@school.edu"
-            defaultValue={state.email ?? ''}
+            defaultValue={state.email ?? initialEmail}
             aria-invalid={emailError ? 'true' : undefined}
             aria-describedby={emailError ? 'email-error' : undefined}
             className="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-blue-500 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm"
@@ -62,7 +89,6 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
           <label htmlFor="password" className="block text-sm font-semibold text-gray-900">
             Password
           </label>
-
         </div>
         <div className="mt-2 flex">
           <div className="-mr-px grid grow grid-cols-1 focus-within:relative">
@@ -100,8 +126,16 @@ export function LoginForm({ next, action = signInAction }: LoginFormProps) {
       <input type="hidden" name="next" value={next ?? ''} />
       <SubmitButton />
 
-      {/* Quick Test Accounts Helper */}
-
+      {/* User Creation / Registration Link */}
+      <div className="pt-2 text-center text-sm text-gray-600">
+        Don&apos;t have an account?{' '}
+        <Link
+          href="/register"
+          className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
+        >
+          Create an account
+        </Link>
+      </div>
     </form>
   )
 }

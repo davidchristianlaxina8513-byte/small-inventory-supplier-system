@@ -23,6 +23,16 @@ describe('updateSession', () => {
     expect(response.headers.get('location')).toBeNull()
   })
 
+  test('allows unauthenticated access to public routes', async () => {
+    getClaims.mockResolvedValueOnce({ data: { claims: null } })
+    const regResponse = await updateSession(request('/register'))
+    expect(regResponse.headers.get('location')).toBeNull()
+
+    getClaims.mockResolvedValueOnce({ data: { claims: null } })
+    const verifyResponse = await updateSession(request('/verify-email'))
+    expect(verifyResponse.headers.get('location')).toBeNull()
+  })
+
   test('redirects unauthenticated protected requests to login', async () => {
     getClaims.mockResolvedValueOnce({ data: { claims: null } })
 

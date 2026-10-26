@@ -373,16 +373,28 @@ isOneToOne: false
                     "created_at"?: string,"id"?: string,"is_active"?: boolean,"name"?: string
                   }
                   Relationships: []
-                },"profiles": {
+                },"email_verifications": {
                   Row: {
-                    "account_status": Database["public"]['Enums']["account_status"],"created_at": string,"email": string | null,"full_name": string,"id": string,"office_id": string | null,"school_id": string | null,"updated_at": string
+                    "attempts": number,"code_hash": string,"created_at": string,"email": string,"expires_at": string,"id": string,"last_sent_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "account_status"?: Database["public"]['Enums']["account_status"],"created_at"?: string,"email"?: string | null,"full_name": string,"id": string,"office_id"?: string | null,"school_id"?: string | null,"updated_at"?: string
+                    "attempts"?: number,"code_hash": string,"created_at"?: string,"email": string,"expires_at": string,"id"?: string,"last_sent_at"?: string,"user_id": string
                   }
                   Update: {
-                    "account_status"?: Database["public"]['Enums']["account_status"],"created_at"?: string,"email"?: string | null,"full_name"?: string,"id"?: string,"office_id"?: string | null,"school_id"?: string | null,"updated_at"?: string
+                    "attempts"?: number,"code_hash"?: string,"created_at"?: string,"email"?: string,"expires_at"?: string,"id"?: string,"last_sent_at"?: string,"user_id"?: string
+                  }
+                  Relationships: []
+                },"profiles": {
+                  Row: {
+                    "account_status": Database["public"]['Enums']["account_status"],"created_at": string,"email": string | null,"full_name": string,"id": string,"is_verified": boolean,"office_id": string | null,"school_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_status"?: Database["public"]['Enums']["account_status"],"created_at"?: string,"email"?: string | null,"full_name": string,"id": string,"is_verified"?: boolean,"office_id"?: string | null,"school_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "account_status"?: Database["public"]['Enums']["account_status"],"created_at"?: string,"email"?: string | null,"full_name"?: string,"id"?: string,"is_verified"?: boolean,"office_id"?: string | null,"school_id"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {

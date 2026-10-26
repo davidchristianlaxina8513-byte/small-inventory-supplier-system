@@ -1,18 +1,47 @@
-# docker-compose.yml — smallinventoryandsuppliersystem (nextjs-supabase) — application + managed Supabase
 services:
-  frontend:
-    container_name: smallinventoryandsuppliersystem-frontend
+  app:
+    container_name: siss-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-http://127.0.0.1:54331}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-http://127.0.0.1:54331}
+      - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - GMAIL_USER=${GMAIL_USER}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  dev:
+    container_name: siss-dev
     build:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "${FRONTEND_HOST_PORT:-3000}:3000"
+      - "3001:3000"
     volumes:
-      - ./.:/app
+      - .:/app
       - /app/node_modules
+      - /app/.next
+    env_file:
+      - .env.local
     environment:
-      - NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-      - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-
-# The Supabase platform is managed separately. Use `supabase start` for the
-# official local stack instead of approximating it with a bare PostgreSQL image.
+      - NODE_ENV=development
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    profiles:
+      - dev
